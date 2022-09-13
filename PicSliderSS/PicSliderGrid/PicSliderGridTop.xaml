@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="PicSliderSS.PicSliderGrid.PicSliderGridTop"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PicSliderSS.PicSliderGrid"
+             xmlns:conv="clr-namespace:PicSliderSS.Converter"
+             mc:Ignorable="d"
+             Width="1920"
+             Height="1080"
+             Name="PicSliderGrid">
+    <UserControl.Resources>
+        <conv:DoubleConverter x:Key="double"/>
+        <conv:TicknessConverter x:Key="tickness"/>
+        <Storyboard x:Key="ShowImage">
+            <ThicknessAnimation
+                Storyboard.TargetName="PicSliderImageGrid"
+                Storyboard.TargetProperty="Margin"
+                From="{Binding PicSliderImageGrid.Margin}" To="0,0,0,0"
+                DecelerationRatio="0.7"
+                Duration="0:0:0.4"/>
+        </Storyboard>
+        <Storyboard x:Key="WaitImage">
+            <ThicknessAnimation
+                    Storyboard.TargetName="PicSliderImageGrid"
+                    Storyboard.TargetProperty="Margin"
+                    From="0,0,0,0" To="0,0,0,0"
+                    Timeline.DesiredFrameRate="30"
+                    Duration="0:0:5"/>
+        </Storyboard>
+        <Storyboard x:Key="HiddenImage">
+            <ThicknessAnimation
+                Storyboard.TargetName="PicSliderImageGrid"
+                Storyboard.TargetProperty="Margin"
+                To="{Binding PicSliderImageGrid.Margin}" From="0,0,0,0"
+                AccelerationRatio="0.7"
+                Duration="0:0:0.4"
+                BeginTime="0:0:0:5.4"/>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid Name="PicSliderTopGrid" ClipToBounds="True">
+        <Grid Name="PicSliderInnerGrid"
+              Width="{Binding ElementName=PicSliderGrid,Path=Width}"
+              Height="{Binding ElementName=PicSliderGrid,Path=Height,Converter={StaticResource double}}"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Bottom">
+            <Grid Name="PicSliderImageGrid"
+                  Width="{Binding ElementName=PicSliderGrid,Path=Width}"
+                  Height="{Binding ElementName=PicSliderGrid,Path=Height}"
+                  Margin="{Binding ElementName=PicSliderGrid,Path=Height,Converter={StaticResource tickness},ConverterParameter='Bottom'}"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Bottom">
+                <Image Source="Y:\Picture\FFXIV\ffxiv_20170524_004322.png"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Stretch="UniformToFill"
+                       Name="PicSliderImage">
+                    <Image.CacheMode>
+                        <BitmapCache RenderAtScale="1"></BitmapCache>
+                    </Image.CacheMode>
+                </Image>
+            </Grid>
+        </Grid>
+        <Grid.Triggers>
+        </Grid.Triggers>
+    </Grid>
+</UserControl>

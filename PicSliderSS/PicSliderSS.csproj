@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2AECA0CA-F130-4F5B-8E03-C886DE79E571}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>PicSliderSS</RootNamespace>
+    <AssemblyName>PicSliderSS</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Common\LogUrls.cs" />
+    <Compile Include="Common\LogUtils.cs" />
+    <Compile Include="Common\PicSliderException.cs" />
+    <Compile Include="Common\StoryboardUtils.cs" />
+    <Compile Include="ImageResource\ImageResourceException.cs" />
+    <Compile Include="ImageResource\ImageResourceFileTypes.cs" />
+    <Compile Include="ImageResource\ImageResourceShapeTypes.cs" />
+    <Compile Include="ImageResource\ImageResourceUrls.cs" />
+    <Compile Include="ImageResource\ImageResourceData.cs" />
+    <Compile Include="ImageResource\ImageResourceQueue.cs" />
+    <Compile Include="ImageResource\ImageResouceUtils.cs" />
+    <Page Include="MainWindow.xaml" />
+    <Page Include="PicSliderScreen\PicSliderScreenD1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PicSliderScreen\PicSliderScreenC2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PicSliderScreen\PicSliderScreenC1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PicSliderScreen\PicSliderScreenB1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PicSliderWindow\PicSliderWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Converter\DoubleConverter.cs" />
+    <Compile Include="Converter\TicknessConverter.cs" />
+    <Compile Include="ImageResource\ImageResourceMessages.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderScreen\PicSliderScreenD1.xaml.cs">
+      <DependentUpon>PicSliderScreenD1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderScreen\PicSliderScreenC2.xaml.cs">
+      <DependentUpon>PicSliderScreenC2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderScreen\PicSliderScreenC1.xaml.cs">
+      <DependentUpon>PicSliderScreenC1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderScreen\PicSliderScreenB1.xaml.cs">
+      <DependentUpon>PicSliderScreenB1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderScreen\PicSliderScreenSize.cs" />
+    <Compile Include="PicSliderWindow\Exceptions\AlreadyScreenElementException.cs" />
+    <Compile Include="PicSliderWindow\Exceptions\ImageNotLoadException.cs" />
+    <Compile Include="PicSliderWindow\Exceptions\InvalidDisposeScreenException.cs" />
+    <Compile Include="PicSliderWindow\Exceptions\PicSliderWindowException.cs" />
+    <Compile Include="PicSliderWindow\PicSliderWindow.xaml.cs">
+      <DependentUpon>PicSliderWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="PicSliderGrid\PicSliderGridLeft.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PicSliderGrid\PicSliderGridTop.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PicSliderGrid\PicSliderGridBottom.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PicSliderGrid\PicSliderGridRight.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PicSliderScreen\PicSliderScreenA.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PicSliderWindow\Exceptions\InvalidScreenException.cs" />
+    <Compile Include="PicSliderGrid\IPicSliderGrid.cs" />
+    <Compile Include="PicSliderGrid\PicSliderGridLeft.xaml.cs">
+      <DependentUpon>PicSliderGridLeft.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderGrid\PicSliderGridTop.xaml.cs">
+      <DependentUpon>PicSliderGridTop.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderGrid\PicSliderGridBottom.xaml.cs">
+      <DependentUpon>PicSliderGridBottom.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderGrid\PicSliderGridRight.xaml.cs">
+      <DependentUpon>PicSliderGridRight.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderScreen\IPicSliderScreen.cs" />
+    <Compile Include="PicSliderScreen\PicSliderScreenA.xaml.cs">
+      <DependentUpon>PicSliderScreenA.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicSliderScreen\Exceptions\PicSliderScreenException.cs" />
+    <Compile Include="PicSliderScreen\Messages\ErrorMessage.cs" />
+    <Compile Include="PicSliderScreen\Exceptions\PicSliderScreenNotImplementScreenException.cs" />
+    <Compile Include="PicSliderScreen\PicSliderScreenTypes.cs" />
+    <Compile Include="PicSliderScreen\PicSliderScreenUtils.cs" />
+    <Compile Include="PicSliderWindow\Messages\ErrorMessage.cs" />
+    <Compile Include="PicSliderWindow\ScreenKeys.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

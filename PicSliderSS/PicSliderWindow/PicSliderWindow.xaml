@@ -1,0 +1,23 @@
+﻿<Window x:Class="PicSliderSS.PicSliderWindow.PicSliderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PicSliderSS"
+        xmlns:pss="clr-namespace:PicSliderSS.PicSliderScreen"
+        mc:Ignorable="d"
+        Title="MainWindow" 
+        xmlns:psg="clr-namespace:PicSliderSS.PicSliderGrid"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        
+        Background="Black"
+        MouseMove="Window_MouseMove"
+        KeyDown="Window_KeyDown"
+        ContentRendered="Window_ContentRendered"
+        Height="1080" Width="1920">
+    <Grid Height="1080" Width="1920">
+        <Grid x:Name="PicSlider1" Visibility="Visible" />
+        <Grid x:Name="PicSlider2" Visibility="Collapsed" />
+    </Grid>
+</Window>
