@@ -26,6 +26,8 @@ namespace PicSliderSS
         /// <param name="e"></param>
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+            Hide();
+            
             LogUtils.WriteLog($"ScreenCount -> {Screen.AllScreens.Length}");
             foreach (var scr in System.Windows.Forms.Screen.AllScreens)
             {
