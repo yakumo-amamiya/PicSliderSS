@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <appSettings>
+        <!-- 対象画像フォルダ -->
+        <TargetFolder>D:\Dropbox\Pictures\Illust</TargetFolder>
+        <!-- 再起読み込み(true or false) -->
+        <Recurse>true</Recurse>
+        <!-- 1画面の最大表示画像数(1～4) -->
+        <MaxCount>4</MaxCount>
+    </appSettings>
+</configuration>

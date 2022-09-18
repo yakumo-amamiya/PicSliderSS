@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using PicSliderSS.Enum;
 
 namespace PicSliderSS.ImageResource
 {
@@ -14,69 +15,42 @@ namespace PicSliderSS.ImageResource
         private string url;
         private bool loaded;
         private int fileType;
-        private int shapeType;
+        private ImageShape shapeType;
         private BitmapImage bitmap;
-        private Exception error;
 
-        public ImageResourceData()
-        {
-            this.url = null;
-            this.loaded = false;
-            this.fileType = ImageResourceFileTypes.NO_DATA;
-            this.shapeType = ImageResourceShapeTypes.NO_SHAPE;
-            this.bitmap = null;
-        }
-
-        public ImageResourceData(string url)
+        public ImageResourceData(string url, int dWidth, int dHeight)
         {
             this.url = url;
-            this.loaded = false;
-            this.fileType = ImageResourceUtils.FileType(this.Url);
-            this.shapeType = ImageResourceShapeTypes.NO_SHAPE;
-            this.bitmap = null;
-        }
-
-        public ImageResourceData(BitmapImage bitmap)
-        {
-            this.bitmap = bitmap;
-            this.url = bitmap.BaseUri.LocalPath;
             this.loaded = true;
-            this.fileType = ImageResourceUtils.FileType(this.url);
-            this.shapeType = ImageResourceUtils.ShapeType(this.Bitmap);
+            LoadImage(dWidth, dHeight);
+            this.fileType = ImageResourceUtils.FileType(this.Url);
         }
 
         public string Url { get => url; }
         public bool Loaded { get => loaded; }
         public int FileType { get => fileType; }
-        public int ShapeType { get => shapeType; }
+        public ImageShape ShapeType { get => shapeType; }
         public BitmapImage Bitmap { get => bitmap; }
-        public Exception Error { get => error; }
 
-        public void LoadImage()
+        public void LoadImage(int dWidth, int dHeight)
         {
-            try
+            var bytes = File.ReadAllBytes(url);
+            var stream = new MemoryStream(bytes);
+            this.bitmap = new BitmapImage();
+            this.bitmap.BeginInit();
+            // 長い方の解像度を採用する。
+            if (dWidth > dHeight)
             {
-                this.bitmap = new BitmapImage();
-                this.bitmap.BeginInit();
-                this.bitmap.DecodePixelWidth = 1920;
-                this.bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                this.bitmap.UriSource = new Uri(this.url);
-                //this.bitmap = new BitmapImage(new Uri(this.url));
-                this.bitmap.EndInit();
-                this.bitmap.Freeze();
-                this.shapeType = ImageResourceUtils.ShapeType(this.Bitmap);
-                Debug.WriteLine(string.Format("ファイルを読み込みました。url:{0}", this.Url));
+                this.Bitmap.DecodePixelWidth = dWidth;
             }
-            catch (System.ArgumentNullException e)
+            else
             {
-                this.error = e;
-                throw new ImageResourceException(string.Format(ImageResourceMessages.EX_ARGUMENT_NULL_EXCEPTION, e.ParamName), e);
+                this.Bitmap.DecodePixelHeight = dHeight;
             }
-            catch (FileNotFoundException e)
-            {
-                this.error = e;
-                throw new ImageResourceException(string.Format(ImageResourceMessages.EX_FILE_NOT_FOUND, e.FileName), e);
-            }
+            this.bitmap.StreamSource = stream;
+            this.bitmap.EndInit();
+            this.bitmap.Freeze();
+            this.shapeType = ImageResourceUtils.ShapeType(Bitmap);
         }
     }
 }

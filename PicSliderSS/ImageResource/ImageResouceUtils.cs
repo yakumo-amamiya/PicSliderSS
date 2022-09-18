@@ -3,6 +3,8 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using System.Linq;
 using System.Collections.Generic;
+using PicSliderSS.Config;
+using PicSliderSS.Enum;
 
 
 namespace PicSliderSS.ImageResource
@@ -14,26 +16,22 @@ namespace PicSliderSS.ImageResource
         /// </summary>
         /// <param name="bitmap">検査対象の画像</param>
         /// <returns>画像の種類(ImageResourceTypes)</returns>
-        public static int ShapeType(BitmapImage bitmap)
+        public static ImageShape ShapeType(BitmapImage bitmap)
         {
-            if (bitmap.Width / bitmap.Height < 1.5)
+            if (bitmap.Width / bitmap.Height >= 1.2)
             {
-                return ImageResourceShapeTypes.SQUARE;
-            }
-            if (bitmap.Height / bitmap.Width < 1.5)
-            {
-                return ImageResourceShapeTypes.SQUARE;
-            }
-
-            if (bitmap.Height > bitmap.Width)
-            {
-                // 縦に長い場合
-                return ImageResourceShapeTypes.RECTANGLE_VERTICAL;
+                return ImageShape.Landscape;
             }
             else
             {
-                // 横に長い場合
-                return ImageResourceShapeTypes.RECTANGLE_SIDE;
+                if (bitmap.Height / bitmap.Width >= 1.2)
+                {
+                    return ImageShape.Portrait;
+                }
+                else
+                {
+                    return ImageShape.Balance;
+                }
             }
         }
 
@@ -65,7 +63,8 @@ namespace PicSliderSS.ImageResource
         /// <returns></returns>
         public static List<string> ImageFiles(string targetDirectory)
         {
-            var files = Directory.GetFiles(targetDirectory, "*", SearchOption.AllDirectories);
+            var opt = AppConfig.Data.Recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            var files = Directory.GetFiles(targetDirectory, "*", opt);
             return files.Where(EnableFilename).ToList();
         }
 
@@ -78,7 +77,7 @@ namespace PicSliderSS.ImageResource
         {
             //string ext = Path.GetExtension(filename).ToLower();
 
-            switch (ImageResourceUtils.FileType(filename))
+            switch (FileType(filename))
             {
                 case ImageResourceFileTypes.JPEG:
                 case ImageResourceFileTypes.PNG:

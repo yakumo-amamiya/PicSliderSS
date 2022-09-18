@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PicSliderSS")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("© 2022 Yakumo Amamiya")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

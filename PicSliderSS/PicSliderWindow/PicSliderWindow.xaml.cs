@@ -1,25 +1,15 @@
-﻿using PicSliderSS.PicSliderWindow.Exceptions;
-using PicSliderSS.PicSliderScreen;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using PicSliderSS.ImageResource;
-using PicSliderSS.PicSliderWindow.Messages;
 using PicSliderSS.Common;
-using System.Threading;
 using System.Windows.Media.Animation;
+using PicSliderSS.Config;
+using PicSliderSS.SliderImageInfomation;
 
 namespace PicSliderSS.PicSliderWindow
 {
@@ -28,130 +18,159 @@ namespace PicSliderSS.PicSliderWindow
     /// </summary>
     public partial class PicSliderWindow : System.Windows.Window
     {
+        public event EventHandler SlideLoaded;
+        private int completed;
+
         private Point prevCursorPosition;
-        private UserControl activeScreen;
-        private Grid screenGrid;
-        private Dictionary<string, UserControl> screens;
-        private ImageResourceQueue iQueue;
+        public ImageResourceQueue ImageQueue { get; set; }
+        private Storyboard[] storyboards;
+
+        public bool Ready { get; set; } = false;
 
         public PicSliderWindow()
         {
-            Debug.WriteLine("[D]MainWindow Constractor");
-
             InitializeComponent();
 
             // カーソル位置記憶変数に初期位置を格納
             prevCursorPosition = new Point(-1, -1);
 
             // 非表示カーソルに指定
-            this.Cursor = Cursors.None;
+            Cursor = Cursors.None;
 
             // 画像Queueを生成
-            // this.iQueue = new ImageResourceQueue(@"C:\Users\yakum\source\repos\PicSliderSS\PicSliderSS\static\D");
-            this.iQueue = new ImageResourceQueue(@"D:\Dropbox\Pictures\Illust");
-
-            // スクリーンディクショナリを生成
-            this.screens = new Dictionary<string, UserControl>();
-            this.screens[ScreenKeys.SCREEN1] = null;
-            this.screens[ScreenKeys.SCREEN2] = null;
-
-            // 画像を取得する
-            List<ImageResourceData> items = this.iQueue.MultiDequeue(1);
-
-            // 画像に適合するスクリーンを生成する
-            this.screens[ScreenKeys.SCREEN1] = PicSliderScreenUtils.CreateLoadedScreen(items);
-            this.activeScreen = this.screens[ScreenKeys.SCREEN1];
-            this.screenGrid = this.PicSlider1;
-
-            // スクリーンを UI に追加
-            this.AddScreenElement(this.PicSlider1, this.activeScreen);
-
+            ImageQueue = new ImageResourceQueue(AppConfig.Data.TargetFolder);
         }
 
-
-        #region プロパティ
-        public Grid HiddenScreenGrid
+        /// <summary>
+        /// 指定された Grid の要素をすべて削除する
+        /// </summary>
+        /// <param name="targetGrid"></param>
+        public void ClearImage()
         {
-            get
+            MainContainer.Children.Clear();
+            storyboards = null;
+            //GC.Collect();
+        }
+
+        public void CreateImage()
+        {
+            var storyboards = new List<Storyboard>();
+            var siiList = SliderImageInformationUtils.CreateRandom(this);
+
+            foreach (var sii in siiList)
             {
-                if (this.screenGrid == this.PicSlider1)
+                var grid = new Canvas();
+                grid.ClipToBounds = true;
+                grid.Width = sii.Width;
+                grid.Height = sii.Height;
+                var image = new Image();
+                image.Stretch = Stretch.Uniform;
+                if (siiList.Length == 1)
                 {
-                    return this.PicSlider2;
+                    image.Width = grid.Width;
+                    image.Height = grid.Height;
                 }
                 else
                 {
-                    return this.PicSlider1;
-                }
-            }
-        }
-
-        public Grid ActiveScreenGrid
-        {
-            get
-            {
-                return this.screenGrid;
-            }
-        }
-
-        public UserControl HiddenScreen
-        {
-            get
-            {
-                if (this.activeScreen == this.screens[ScreenKeys.SCREEN1])
-                {
-                    return this.screens[ScreenKeys.SCREEN2];
-                }
-                else
-                {
-                    return this.screens[ScreenKeys.SCREEN1];
-                }
-            }
-        }
-
-        public string HiddenScreenKey
-        {
-            get
-            {
-                foreach(string key in this.screens.Keys)
-                {
-                    if (this.screens[key] == this.HiddenScreen)
+                    var wGridRatio = grid.Width / grid.Height;
+                    if (wGridRatio > 1.0)
                     {
-                        return key;
+                        var wImgRatio = sii.ImageResource.Bitmap.Width / sii.ImageResource.Bitmap.Height;
+                        if (wGridRatio > wImgRatio) 
+                        {
+                            image.Width = grid.Width;
+                            grid.VerticalAlignment = VerticalAlignment.Center;
+                        }
+                        else
+                        {
+                            image.Height = grid.Height;
+                            grid.HorizontalAlignment = HorizontalAlignment.Center;
+                        }
+                    }
+                    else
+                    {
+                        var hGridRatio = grid.Height / grid.Width;
+                        var hImgRatio = sii.ImageResource.Bitmap.Height / sii.ImageResource.Bitmap.Width;
+                        if (hGridRatio > hImgRatio) 
+                        {
+                            image.Height = grid.Height;
+                            grid.HorizontalAlignment = HorizontalAlignment.Center;
+                        }
+                        else
+                        {
+                            image.Width = grid.Width;
+                            grid.VerticalAlignment = VerticalAlignment.Center;
+                        }
                     }
                 }
+                Canvas.SetTop(grid, sii.Top);
+                Canvas.SetLeft(grid, sii.Left);
+                image.Source = sii.ImageResource.Bitmap;
 
-                return null;
+                var story = StoryboardUtils.SetSlideAnimation(grid, sii.SlideDirection, sii.Start, sii.Middle);
+                story.Completed += PicSliderCompletedHandler;
+                grid.Children.Add(image);
+                MainContainer.Children.Add(grid);
+                storyboards.Add(story);
             }
+            this.storyboards = storyboards.ToArray();
         }
 
-        #endregion
-
-        #region 子要素用ハンドラ
-
-        public void PicSlideAllCompletedHandler(object sender, EventArgs args)
+        /// <summary>
+        /// スクリーン読み込み処理
+        /// </summary>
+        public void LoadImage()
         {
-            Debug.WriteLine("[D]PicSlide is all Completed!!");
-
-            ((IPicSliderScreen)this.HiddenScreen).ScreenRendered += this.ScreenRenderedHandler;
-
-            // 表示を切り替え
-            this.SwitchAcrive();
-
+            // エレメントに紐づくスクリーンを削除
+            ClearImage();
+            CreateImage();
+            
+            // 読み込み完了処理
+            Ready = true;
+            SlideLoaded?.Invoke(this, EventArgs.Empty);
         }
 
-        public void ScreenRenderedHandler(object sender, EventArgs args)
+        /// <summary>
+        /// スライド開始処理
+        /// </summary>
+        public void SlideStart()
         {
-            Debug.WriteLine("[D]Screen Rendered : " + sender.ToString());
+            // ステータスを更新
+            Ready = false;
+            completed = 0;
 
             // PicSlide を開始
-            ((IPicSliderScreen)this.activeScreen).PicSlideAllCompleted += new EventHandler(PicSlideAllCompletedHandler);
-            ((IPicSliderScreen)this.activeScreen).BeginPictureSlide();
-
-            // 次 Screen を準備
-            this.UpdateHiddenPicSlider();
-
+            foreach (var sb in storyboards)
+            {
+                sb.Begin();
+            }
         }
+        
+        #region 子要素用ハンドラ
 
+        /// <summary>
+        /// 各スライド終了
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void PicSliderCompletedHandler(object sender, EventArgs args)
+        {
+            completed += 1;
+            if (completed == storyboards.Length)
+            {
+                // 終了数が全ストーリーボードと一致したとき
+                PicSlideAllCompletedHandler(this, null);
+            }
+        }
+        /// <summary>
+        /// 全スライド終了処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void PicSlideAllCompletedHandler(object sender, EventArgs args)
+        {
+            LoadImage();
+        }
         #endregion
 
         #region イベントハンドラ
@@ -164,13 +183,7 @@ namespace PicSliderSS.PicSliderWindow
         /// <param name="e"></param>
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            Debug.WriteLine("[D]MainWindow contentRendered");
-
-            ((IPicSliderScreen)this.activeScreen).PicSlideAllCompleted += new EventHandler(PicSlideAllCompletedHandler);
-            ((IPicSliderScreen)this.activeScreen).BeginPictureSlide();
-
-            // 次 Screen を準備
-            this.UpdateHiddenPicSlider();
+            LoadImage();
         }
 
         /// <summary>
@@ -193,7 +206,11 @@ namespace PicSliderSS.PicSliderWindow
             // マウスを動かしたとき、アプリケーションを終了する。
             if (prevCursorPosition != Mouse.GetPosition(this))
             {
-                Application.Current.Shutdown();
+#if DEBUG
+                return;            
+#endif
+                LogUtils.WriteLog($"Shutdown by MouseMove");
+                CommonUtils.Shutdown();
             }
         }
 
@@ -205,105 +222,17 @@ namespace PicSliderSS.PicSliderWindow
         /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            Application.Current.Shutdown();
+#if DEBUG
+            // デバッグ時 ESCAPE 以外のキーが押下された場合は中断する。
+            if (e.Key != Key.Escape)
+            {
+                return;
+            }
+#endif
+            LogUtils.WriteLog($"Shutdown by Keydown -> {e.Key}");
+            CommonUtils.Shutdown();
         }
 
         #endregion
-
-        /// <summary>
-        /// アクティブスクリーンを切り替える
-        /// </summary>
-        public void SwitchAcrive()
-        {
-            Debug.WriteLine("[D]Switch Screen");
-            if (this.activeScreen == this.screens[ScreenKeys.SCREEN1])
-            {
-                this.PicSlider1.Visibility = Visibility.Collapsed;
-                this.activeScreen = this.screens[ScreenKeys.SCREEN2];
-                this.screenGrid = this.PicSlider2;
-                this.PicSlider2.Visibility = Visibility.Visible;
-            }
-            else if (this.activeScreen == this.screens[ScreenKeys.SCREEN2])
-            {
-                this.PicSlider2.Visibility = Visibility.Collapsed;
-                this.activeScreen = this.screens[ScreenKeys.SCREEN1];
-                this.screenGrid = this.PicSlider1;
-                this.PicSlider1.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                throw new InvalidSwitchScreenException(ErrorMessage.SELECTED_INVALID_SCREEN);
-            }
-        }
-
-        /// <summary>
-        /// PicSliderGridを更新させる処理
-        /// </summary>
-        public void UpdateHiddenPicSlider()
-        {
-            Debug.WriteLine("[D]Update Hidden PicSlider");
-
-            Grid picSliderGrid = this.HiddenScreenGrid;
-
-            // エレメントに紐づくスクリーンを削除
-            this.ClearScreenElement(picSliderGrid);
-
-            // 不要スクリーンを削除
-            this.screens[HiddenScreenKey] = null;
-
-            // 画像を取得する
-            List<ImageResourceData> items = this.iQueue.MultiDequeue();
-
-            // 画像に適合するスクリーンを生成する
-            UserControl newScreen = PicSliderScreenUtils.CreateLoadedScreen(items);
-
-            // 不要スクリーンをセット
-            this.screens[HiddenScreenKey] = newScreen;
-
-            // スクリーンを画面に追加
-            this.AddScreenElement(picSliderGrid, newScreen);
-        }
-
-        /// <summary>
-        /// 指定された Grid の要素をすべて削除する
-        /// </summary>
-        /// <param name="targetGrid"></param>
-        public void ClearScreenElement(Grid targetGrid)
-        {
-            if (this.activeScreen != null && targetGrid.Children.Contains(this.activeScreen))
-            {
-                throw new PicSliderException("Acrive化されているスクリーンは削除できません。");
-            }
-
-            targetGrid.Children.Clear();
-            System.GC.Collect();
-        }
-
-        /// <summary>
-        /// 指定された Grid に Key で渡されたスクリーンを加える
-        /// </summary>
-        /// <param name="targetGrid"></param>
-        /// <param name="screenKey"></param>
-        public void AddScreenElement(Grid targetGrid, string screenKey)
-        {
-            this.AddScreenElement(targetGrid, this.screens[screenKey]);
-        }
-
-        /// <summary>
-        /// 指定された Grid に 渡されたスクリーンを加える
-        /// </summary>
-        /// <param name="targetGrid"></param>
-        /// <param name="screen"></param>
-        public void AddScreenElement(Grid targetGrid, UserControl screen)
-        {
-            // セット済みのGridか判定
-            if (targetGrid.Children.Contains(screen))
-            {
-                throw new AlreadyExistScreenElementException("すでにセット済みの Grid です。");
-            }
-
-            // 要素をセット
-            targetGrid.Children.Add(screen);
-        }
     }
 }

@@ -1,44 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace PicSliderSS.Common
 {
     class LogUtils
     {
-        public static string userProfileDir = Environment.GetEnvironmentVariable(LogUrls.KEY_USER_PROFILE);
+        public static readonly string LogDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) + @"\log";
+        public static bool Rotated = false;
         /// <summary>
         /// エラーログファイルのURLを生成する
         /// ディレクトリがなければ生成する
         /// </summary>
         /// <returns></returns>
-        public static string ErrorLogFile()
+        public static string LogFile()
         {
-            string url = LogUtils.userProfileDir + string.Format(LogUrls.ERROR_LOG_FILEPATH, DateTime.Now.Date.ToString("yyyymmdd"));
-            string dir = Path.GetDirectoryName(url);
-            if (!Directory.Exists(dir))
+            if (!Directory.Exists(LogDirectory))
             {
-                Directory.CreateDirectory(dir);
+                Directory.CreateDirectory(LogDirectory);
+            }
+            else
+            {
+                if (!Rotated)
+                {
+                    Rotate();
+                    Rotated = true;
+                }
             }
 
-            return url;
-        }
-
-        /// <summary>
-        /// スタックトレースログファイルのURLを生成する
-        /// </summary>
-        /// <returns></returns>
-        public static string StacktraceLogFile()
-        {
-            string url = LogUtils.userProfileDir + string.Format(LogUrls.STACKTRACE_LOG_FILEPATH, DateTime.Now.Date.ToString("yyyymmdd"));
-            string dir = Path.GetDirectoryName(url);
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            string url = LogDirectory + @"\" + $"log_{date}.log";
+                
             return url;
         }
 
@@ -46,18 +38,35 @@ namespace PicSliderSS.Common
         /// エラーログを出力する
         /// </summary>
         /// <param name="message"></param>
-        public static void ErrorLog(string message)
+        /// <param name="level">0: レベル低、1: レベル中、2:レベル高</param>
+        public static void WriteLog(string message, LogLevel level = LogLevel.Normal)
         {
-            System.IO.File.AppendAllText(ErrorLogFile(), message);
+            string dt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            string fullMessage = $"[{dt}][inf]{message}\r\n";
+            File.AppendAllText(LogFile(), fullMessage);
         }
 
-        /// <summary>
-        /// スタックトレースログを出力する
-        /// </summary>
-        /// <param name="message"></param>
-        public static void StacktraceLog(string message)
+        public static void WriteErrorLog(string message)
         {
-            System.IO.File.AppendAllText(StacktraceLogFile(), message);
+            string dt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            string fullMessage = $"[{dt}][err]{message}\r\n";
+            File.AppendAllText(LogFile(), fullMessage);
+        }
+
+        private static void Rotate()
+        {
+            var files = Directory.GetFiles(LogDirectory, "*.log");
+            foreach (var file in files)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(file);
+                var dtStr = fileName.Replace("log_", "");
+                var fileDt = DateTime.ParseExact(dtStr, "yyyy-MM-dd", null);
+                var diff = DateTime.Now - fileDt;
+                if (diff.Days > 30)
+                {
+                    File.Delete(file);
+                }
+            }
         }
     }
 }

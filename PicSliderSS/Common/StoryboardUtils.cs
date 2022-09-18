@@ -1,9 +1,4 @@
-﻿using PicSliderSS.PicSliderGrid;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -12,87 +7,56 @@ namespace PicSliderSS.Common
 {
     class StoryboardUtils
     {
-        public static void LinkingShowWaitHidden(Storyboard show, Storyboard hidden, Storyboard wait)
+        /// <summary>
+        /// スライドアニメーションの生成
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="direction"></param>
+        /// <param name="start"></param>
+        /// <param name="middle"></param>
+        /// <returns></returns>
+        public static Storyboard SetSlideAnimation(Panel target, SlideDirection direction, double start, double middle)
         {
-            show.Completed += (o, e) => { wait.Begin(); };
-            wait.Completed += (o, e) => { hidden.Begin(); };
-        }
-
-        public static Storyboard CreateSlideStoryboard(IEnumerable<Grid> grids)
-        {
-            Storyboard sb = new Storyboard();
-
-            ParallelTimeline pt1 = new ParallelTimeline(TimeSpan.FromSeconds(1.3));
-            ParallelTimeline pt2 = new ParallelTimeline(TimeSpan.FromSeconds(4.0));
-            ParallelTimeline pt3 = new ParallelTimeline(TimeSpan.FromSeconds(5.0));
-
-            foreach (Grid grid in grids)
+            double preWait = 1.5;
+            double wait = 6.0;
+            double afterWait = 1.5;
+            var story = new Storyboard();
+            var pt1 = new ParallelTimeline(TimeSpan.FromSeconds(preWait));
+            var pt2 = new ParallelTimeline(TimeSpan.FromSeconds(preWait + wait));
+            var pt3 = new ParallelTimeline(TimeSpan.FromSeconds(preWait + wait + afterWait));
+            var show = new DoubleAnimation();
+            var hide = new DoubleAnimation();
+            show.Duration = new Duration(TimeSpan.FromSeconds(0.5));
+            hide.Duration = new Duration(TimeSpan.FromSeconds(0.5));
+            show.DecelerationRatio = 0.8;
+            hide.AccelerationRatio = 0.8;
+            show.To = middle;
+            hide.To = start;
+            switch (direction)
             {
-                pt1.Children.Add(CreateShowAnimation(grid));
-                pt2.Children.Add(CreateHiddenAnimation(grid));
+                case SlideDirection.BottomToTop:
+                case SlideDirection.TopToBottom:
+                    Storyboard.SetTarget(show, target);
+                    Storyboard.SetTargetProperty(show,  new PropertyPath(Canvas.TopProperty));
+                    Storyboard.SetTarget(hide, target);
+                    Storyboard.SetTargetProperty(hide,  new PropertyPath(Canvas.TopProperty));
+                    break;
+                case SlideDirection.LeftToRight:
+                case SlideDirection.RightToLeft:
+                default:
+                    Storyboard.SetTarget(show, target);
+                    Storyboard.SetTargetProperty(show,  new PropertyPath(Canvas.LeftProperty));
+                    Storyboard.SetTarget(hide, target);
+                    Storyboard.SetTargetProperty(hide,  new PropertyPath(Canvas.LeftProperty));
+                    break;
             }
-
-            sb.Children.Add(pt1);
-            sb.Children.Add(pt2);
-            sb.Children.Add(pt3);
-
-            return sb;
+            pt1.Children.Add(show);
+            pt2.Children.Add(hide);
+            story.Children.Add(pt1);
+            story.Children.Add(pt2);
+            story.Children.Add(pt3);
+            
+            return story;
         }
-
-        public static Storyboard CreateShowStoryboard()
-        {
-            Storyboard sb = new Storyboard();
-            sb.BeginTime = TimeSpan.FromSeconds(0);
-            sb.FillBehavior = FillBehavior.HoldEnd;
-            return sb;
-        }
-        public static Storyboard CreateHiddenStoryboard()
-        {
-            Storyboard sb = new Storyboard();
-            sb.BeginTime = TimeSpan.FromSeconds(0);
-            sb.FillBehavior = FillBehavior.HoldEnd;
-            return sb;
-        }
-        public static Storyboard CreateWaitStoryboard()
-        {
-            Storyboard sb = new Storyboard();
-            sb.BeginTime = TimeSpan.FromSeconds(0);
-            sb.FillBehavior = FillBehavior.HoldEnd;
-            sb.SlipBehavior = SlipBehavior.Grow;
-            return sb;
-        }
-
-        public static ThicknessAnimation CreateShowAnimation(Grid imageGrid)
-        {
-            ThicknessAnimation ta = new ThicknessAnimation(new Thickness(0, 0, 0, 0), new Duration(TimeSpan.FromSeconds(0.3)), FillBehavior.HoldEnd);
-            ta.DecelerationRatio = 0.8;
-            Storyboard.SetTarget(ta, imageGrid);
-            Storyboard.SetTargetProperty(ta, new PropertyPath(Grid.MarginProperty));
-
-            return ta;
-        }
-
-        public static ThicknessAnimation CreateHiddenAnimation(Grid imageGrid)
-        {
-            ThicknessAnimation ta = new ThicknessAnimation(imageGrid.Margin, new Duration(TimeSpan.FromSeconds(0.3)), FillBehavior.HoldEnd);
-            ta.AccelerationRatio = 0.8;
-            Storyboard.SetTarget(ta, imageGrid);
-            Storyboard.SetTargetProperty(ta, new PropertyPath(Grid.MarginProperty));
-            ta.FillBehavior = FillBehavior.HoldEnd;
-
-            return ta;
-        }
-
-        public static ThicknessAnimation CreateWaitAnimation(Grid imageGrid)
-        {
-            ThicknessAnimation ta = new ThicknessAnimation(new Thickness(0, 0, 0, 0), new Duration(TimeSpan.FromSeconds(3)), FillBehavior.HoldEnd);
-            Storyboard.SetTarget(ta, imageGrid);
-            Storyboard.SetTargetProperty(ta, new PropertyPath(Grid.MarginProperty));
-            ta.FillBehavior = FillBehavior.HoldEnd;
-
-            return ta;
-        }
-
-
     }
 }
