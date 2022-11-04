@@ -23,7 +23,7 @@ namespace PicSliderSS.Common
             {
                 if (!Rotated)
                 {
-                    Rotate();
+                    // Rotate(); 過去のログファイルを削除
                     Rotated = true;
                 }
             }
@@ -41,9 +41,12 @@ namespace PicSliderSS.Common
         /// <param name="level">0: レベル低、1: レベル中、2:レベル高</param>
         public static void WriteLog(string message, LogLevel level = LogLevel.Normal)
         {
+            #if DEBUG
+            // デバッグ時のみ出力
             string dt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             string fullMessage = $"[{dt}][inf]{message}\r\n";
             File.AppendAllText(LogFile(), fullMessage);
+            #endif
         }
 
         public static void WriteErrorLog(string message)
