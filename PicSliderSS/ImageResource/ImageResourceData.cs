@@ -34,10 +34,9 @@ namespace PicSliderSS.ImageResource
 
         public void LoadImage(int dWidth, int dHeight)
         {
-            var bytes = File.ReadAllBytes(url);
-            var stream = new MemoryStream(bytes);
             this.bitmap = new BitmapImage();
             this.bitmap.BeginInit();
+            this.bitmap.UriSource = new Uri(url);
             // 長い方の解像度を採用する。
             if (dWidth > dHeight)
             {
@@ -47,7 +46,6 @@ namespace PicSliderSS.ImageResource
             {
                 this.Bitmap.DecodePixelHeight = dHeight;
             }
-            this.bitmap.StreamSource = stream;
             this.bitmap.EndInit();
             this.bitmap.Freeze();
             this.shapeType = ImageResourceUtils.ShapeType(Bitmap);
