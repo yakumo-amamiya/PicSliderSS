@@ -7,10 +7,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using PicSliderSS.Common;
 using PicSliderSS.Config;
 using PicSliderSS.Enum;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace PicSliderSS
 {
@@ -105,6 +108,7 @@ namespace PicSliderSS
         {
             LogUtils.WriteErrorLog("予期しないエラーが発生しました。");
             var exception = e.Exception;
+            var message = exception.Message;
             while (exception != null)
             {
                 LogUtils.WriteErrorLog("Message     -> " + exception.Message);
@@ -112,6 +116,8 @@ namespace PicSliderSS
                 LogUtils.WriteErrorLog("StackTrace  ->\r\n" + exception.StackTrace);
                 exception = e.Exception.InnerException;
             }
+            
+            MessageBox.Show($"予期しないエラーが発生しました。\n -> {message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
