@@ -9,7 +9,7 @@ namespace PicSliderSS.SliderImageInfomation
 {
     public static class SliderImageInformationUtils
     {
-        public const double Margin = 2.0;
+        public const double Margin = 3.0;
 
         public static SliderImageInformation[] CreateRandom(PicSliderWindow.PicSliderWindow window)
         {
