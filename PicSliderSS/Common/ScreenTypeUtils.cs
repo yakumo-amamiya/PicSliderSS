@@ -5,31 +5,12 @@ namespace PicSliderSS.Common
 {
     public static class ScreenTypeUtils
     {
-        public static ScreenType[] GetTypes()
+        public static ScreenType[] GetTypes(DisplayType dp)
         {
-            switch (AppConfig.Data.MaxCount)
+            switch (dp)
             {
-                case 1:
-                    return new[]
-                    {
-                        ScreenType.A
-                    };
-                case 2:
-                    return new[]
-                    {
-                        ScreenType.A,
-                        ScreenType.B
-                    };
-                case 3:
-                    return new[]
-                    {
-                        ScreenType.A,
-                        ScreenType.B,
-                        ScreenType.C,
-                        ScreenType.D1,
-                        ScreenType.D2,
-                    };
-                case 4:
+                case DisplayType.Square:
+                case DisplayType.Wide: 
                     return new[]
                     {
                         ScreenType.A,
@@ -39,10 +20,23 @@ namespace PicSliderSS.Common
                         ScreenType.D2,
                         ScreenType.E,
                     };
-                default:
+                    break;
+                case DisplayType.UltraWide:
                     return new[]
                     {
                         ScreenType.A,
+                        ScreenType.B,
+                        ScreenType.C,
+                        ScreenType.F,
+                        ScreenType.G1,
+                        ScreenType.G2,
+                    };
+                    break;
+                default:
+                    LogUtils.WriteLog("想定されないScreenTypeが指定されています。", LogLevel.Normal);
+                    return new[]
+                    {
+                        ScreenType.A
                     };
             }
         }
