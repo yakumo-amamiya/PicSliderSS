@@ -4,10 +4,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:PicSliderSS"
+        xmlns:config="clr-namespace:PicSliderSS.Config"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="PicSlider" Width="780" Height="180"
         Loaded="MainWindow_OnLoaded">
-    <Grid>
-        
-    </Grid>
+        <StackPanel
+                x:Name="MainContainer"
+                d:DataContext="{d:DesignInstance config:AppConfig}"
+                Margin="10,5,10,15" 
+                >
+                <Label FontWeight="Bold">ユーザ設定</Label>
+                <StackPanel Orientation="Horizontal">
+                        <Label Width="100px">対象フォルダ</Label>
+                        <Label>：</Label>
+                        <TextBox x:Name="TargetFolderBox" 
+                                 Width="500px" 
+                                 Height="24px" 
+                                 VerticalContentAlignment="Center" 
+                                 Text="{Binding TargetFolder}"/>
+                        <Button x:Name="PickUpButton"
+                                Content="選択" 
+                                Width="50px" 
+                                Height="24px"
+                                Click="PickUpButton_OnClick"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                        <Label Width="100px">サブフォルダを対象</Label><Label>：</Label>
+                        <CheckBox 
+                                VerticalAlignment="Center"
+                                IsChecked="{Binding Recurse}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <Button 
+                                x:Name="ExeButton" 
+                                Content="実行" 
+                                Width="60px" 
+                                Height="24px" 
+                                Margin="5,0,5,0"
+                                Click="ExeButton_OnClick"/>
+                        <Button 
+                                x:Name="SaveButton" 
+                                Content="保存" 
+                                Width="60px" 
+                                Height="24px" 
+                                Margin="5,0,5,0"
+                                Click="SaveButton_OnClick"/>
+                        <Button 
+                                x:Name="CancelButton" 
+                                Content="閉じる" 
+                                Width="60px" 
+                                Height="24px" 
+                                Margin="5,0,5,0"
+                                Click="CancelButton_OnClick"/>
+                </StackPanel>
+        </StackPanel>
 </Window>

@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Threading;
 using PicSliderSS.Common;
 using PicSliderSS.Config;
+using PicSliderSS.Enum;
 
 namespace PicSliderSS
 {
@@ -43,7 +44,6 @@ namespace PicSliderSS
                 else if (mode.StartsWith("/c"))
                 {
                     ShowConfiguration();
-                    CommonUtils.Shutdown();
                 }
                 else if (mode.StartsWith("/p"))
                 {
@@ -58,11 +58,22 @@ namespace PicSliderSS
             }
             else
             {
-                ShowConfiguration();
-                CommonUtils.Shutdown();
+                ShowNormal();
             }
         }
 
+        private void ShowNormal()
+        {
+            // 設定値読み込み
+            AppConfig.Data = new AppConfig();
+            AppConfig.Data.Load();
+            
+            // 画面を起動
+            main = new MainWindow(StartUpMode.Normal);
+            main.Show();
+
+        }
+        
         private void ShowScreensaver()
         {
             // 設定値読み込み
@@ -70,7 +81,7 @@ namespace PicSliderSS
             AppConfig.Data.Load();
             
             // 画面を起動
-            main = new MainWindow();
+            main = new MainWindow(StartUpMode.ScreenSaver);
             main.Show();
         }
 
@@ -81,15 +92,13 @@ namespace PicSliderSS
 
         private void ShowConfiguration()
         {
+            // 設定値読み込み
+            AppConfig.Data = new AppConfig();
+            AppConfig.Data.Load();
 
-            string filePath = AppConfig.GetConfigPath();
-
-            var startInfo = new System.Diagnostics.ProcessStartInfo()
-            {
-                FileName = filePath,
-            };
-            var proc = System.Diagnostics.Process.Start(startInfo);
-            proc?.WaitForExit();
+            // 画面を起動
+            main = new MainWindow(StartUpMode.Config);
+            main.Show();
         }
 
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
