@@ -62,6 +62,10 @@ namespace PicSliderSS.PicSliderWindow
 
             foreach (var sii in siiList)
             {
+                var imgWidth = sii.ImageResource.Bitmap.Width;
+                var imgHeight = sii.ImageResource.Bitmap.Height;
+                int BaseFlag = -1; // -1 -> 無効値、0 -> Width 基準、 1 -> Height 基準。 
+
                 var grid = new Canvas();
                 grid.ClipToBounds = true;
                 grid.Width = sii.Width;
@@ -82,30 +86,46 @@ namespace PicSliderSS.PicSliderWindow
                         if (wGridRatio > wImgRatio) 
                         {
                             image.Width = grid.Width;
-                            grid.VerticalAlignment = VerticalAlignment.Center;
+                            BaseFlag = 0;
                         }
                         else
                         {
                             image.Height = grid.Height;
-                            grid.HorizontalAlignment = HorizontalAlignment.Center;
+                            BaseFlag = 1;
                         }
                     }
                     else
                     {
                         var hGridRatio = grid.Height / grid.Width;
-                        var hImgRatio = sii.ImageResource.Bitmap.Height / sii.ImageResource.Bitmap.Width;
+                        var hImgRatio = imgHeight / imgWidth;
+                        // グリッド縦長 画像縦長
                         if (hGridRatio > hImgRatio) 
                         {
                             image.Height = grid.Height;
-                            grid.HorizontalAlignment = HorizontalAlignment.Center;
+                            BaseFlag = 1;
                         }
                         else
                         {
                             image.Width = grid.Width;
-                            grid.VerticalAlignment = VerticalAlignment.Center;
+                            BaseFlag = 0;
                         }
                     }
                 }
+
+                // 画像部分の中央揃え
+                if (BaseFlag == 0)
+                {
+                    // Width を基準とした場合、縦方向を中央揃えする。
+                    var rate = grid.Width / imgWidth;
+                    Canvas.SetTop(image, -((rate * imgHeight - grid.Height) / 2));
+                }
+                else if (BaseFlag == 1)
+                {
+                    // Height を基準とした場合、横方向を中央揃えする。
+                    var rate = grid.Height / imgHeight;
+                    Canvas.SetLeft(image, -((rate * imgWidth - grid.Width) / 2));
+                }
+                
                 Canvas.SetTop(grid, sii.Top);
                 Canvas.SetLeft(grid, sii.Left);
                 image.Source = sii.ImageResource.Bitmap;
