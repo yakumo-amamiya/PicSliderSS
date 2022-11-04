@@ -13,7 +13,7 @@ namespace PicSliderSS.SliderImageInfomation
 
         public static SliderImageInformation[] CreateRandom(PicSliderWindow.PicSliderWindow window)
         {
-            var array = ScreenTypeUtils.GetTypes();
+            var array = ScreenTypeUtils.GetTypes(window.DisplayType);
 
             return Create(CommonUtils.PickRandom(array), window);
         }
@@ -33,6 +33,12 @@ namespace PicSliderSS.SliderImageInfomation
                     return CreateD2(window);
                 case ScreenType.E:
                     return CreateE(window);
+                case ScreenType.F:
+                    return CreateF(window);
+                case ScreenType.G1:
+                    return CreateG1(window);
+                case ScreenType.G2:
+                    return CreateG2(window);
             }
 
             return null;
@@ -107,7 +113,7 @@ namespace PicSliderSS.SliderImageInfomation
             siiList.Add(CreateImageInfo(width, window.Height, window.Width - width, 0, d2, window.ImageQueue, window));
             return siiList.ToArray();
         }
-
+        
         /// <summary>
         /// 横並び3枚
         /// ┌──┬──┬──┐
@@ -254,6 +260,143 @@ namespace PicSliderSS.SliderImageInfomation
             return siiList.ToArray();
         }
         
+        /// <summary>
+        /// 横並び4枚（ウルトラワイド向け）
+        /// ┌──┬──┬──┬──┐
+        /// │  │  │  │  │
+        /// └──┴──┴──┴──┘
+        /// </summary>
+        /// <param name="window"></param>
+        private static SliderImageInformation[] CreateF(PicSliderWindow.PicSliderWindow window)
+        {
+            var siiList = new List<SliderImageInformation>();
+            var width = window.Width / 4 - Margin * 3;
+            SlideDirection d1;
+            SlideDirection d2;
+            SlideDirection d3;
+            SlideDirection d4;
+            switch (CommonUtils.GetRandom(2))
+            {
+                case 0:
+                    d1 = SlideDirection.TopToBottom;
+                    d2 = SlideDirection.BottomToTop;
+                    d3 = SlideDirection.TopToBottom;
+                    d4 = SlideDirection.BottomToTop;
+                    break;
+                default:
+                    d1 = SlideDirection.BottomToTop;
+                    d2 = SlideDirection.TopToBottom;
+                    d3 = SlideDirection.BottomToTop;
+                    d4 = SlideDirection.TopToBottom;
+                    break;
+            }
+            siiList.Add(CreateImageInfo(width, window.Height, 0, 0, d1, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, window.Height, width + Margin, 0, d2, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, window.Height, width * 2 + Margin * 2, 0, d3, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, window.Height, width * 3 + Margin * 3, 0, d4, window.ImageQueue, window));
+            return siiList.ToArray();
+        }
+
+        /// <summary>
+        /// 左2枚（縦） + 右2枚（横）（ウルトラワイド向け）
+        /// ┌───┬───┬───┐
+        /// │   │   ├───┤
+        /// └───┴───┴───┘
+        /// </summary>
+        /// <param name="window"></param>
+        private static SliderImageInformation[] CreateG1(PicSliderWindow.PicSliderWindow window)
+        {
+            var siiList = new List<SliderImageInformation>();
+            var width = window.Width / 3 - Margin * 2;
+            var heightL = window.Height;
+            var heightR = window.Height / 2 - Margin;
+            SlideDirection d1;
+            SlideDirection d2;
+            SlideDirection d3;
+            SlideDirection d4;
+            switch (CommonUtils.GetRandom(2))
+            {
+                case 0:
+                    d1 = SlideDirection.BottomToTop;
+                    d2 = SlideDirection.TopToBottom;
+                    break;
+                default:
+                    d1 = SlideDirection.TopToBottom;
+                    d2 = SlideDirection.BottomToTop;
+                    break;
+            }
+            switch (CommonUtils.GetRandom(3))
+            {
+                case 0:
+                    d3 = SlideDirection.RightToLeft;
+                    d4 = SlideDirection.BottomToTop;
+                    break;
+                case 1:
+                    d3 = SlideDirection.TopToBottom;
+                    d4 = SlideDirection.BottomToTop;
+                    break;
+                default:
+                    d3 = SlideDirection.TopToBottom;
+                    d4 = SlideDirection.RightToLeft;
+                    break;
+            }
+            siiList.Add(CreateImageInfo(width, heightL, 0, 0, d1, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, heightL, width + Margin, 0, d2, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, heightR, width * 2 + Margin * 2, 0, d3, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, heightR, width * 2 + Margin * 2, heightR + Margin, d4, window.ImageQueue, window));
+            return siiList.ToArray();
+        }
+
+        /// <summary>
+        /// 左2枚（横） + 右1枚（縦）（ウルトラワイド向け）
+        /// ┌───┬───┬───┐
+        /// ├───┤   │   │
+        /// └───┴───┴───┘
+        /// </summary>
+        /// <param name="window"></param>
+        private static SliderImageInformation[] CreateG2(PicSliderWindow.PicSliderWindow window)
+        {
+            var siiList = new List<SliderImageInformation>();
+            var width = window.Width / 3 - Margin * 2;
+            var heightL = window.Height / 2 - Margin;
+            var heightR = window.Height;
+            SlideDirection d1;
+            SlideDirection d2;
+            SlideDirection d3;
+            SlideDirection d4;
+            switch (CommonUtils.GetRandom(2))
+            {
+                case 0:
+                    d3 = SlideDirection.BottomToTop;
+                    d4 = SlideDirection.TopToBottom;
+                    break;
+                default:
+                    d3 = SlideDirection.TopToBottom;
+                    d4 = SlideDirection.BottomToTop;
+                    break;
+            }
+            switch (CommonUtils.GetRandom(3))
+            {
+                case 0:
+                    d1 = SlideDirection.TopToBottom;
+                    d2 = SlideDirection.LeftToRight;
+                    break;
+                case 1:
+                    d1 = SlideDirection.TopToBottom;
+                    d2 = SlideDirection.BottomToTop;
+                    break;
+                default:
+                    d1 = SlideDirection.LeftToRight;
+                    d2 = SlideDirection.BottomToTop;
+                    break;
+            }
+            siiList.Add(CreateImageInfo(width, heightL, 0, 0, d1, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, heightL, 0, heightL + Margin, d2, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, heightR, width + Margin, 0, d3, window.ImageQueue, window));
+            siiList.Add(CreateImageInfo(width, heightR, width * 2 + Margin * 2, 0, d4, window.ImageQueue, window));
+            return siiList.ToArray();
+        }
+
         private static SliderImageInformation CreateImageInfo(double width, double height, double left, double top, SlideDirection direction, ImageResourceQueue queue, PicSliderWindow.PicSliderWindow window)
         {
             var sii = new SliderImageInformation();

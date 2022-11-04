@@ -63,12 +63,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\CommonUtils.cs" />
+    <Compile Include="Common\DisplayUtils.cs" />
     <Compile Include="Common\LogLevel.cs" />
     <Compile Include="Common\LogUtils.cs" />
     <Compile Include="Common\ScreenTypeUtils.cs" />
     <Compile Include="Common\SlideDirection.cs" />
     <Compile Include="Common\StoryboardUtils.cs" />
     <Compile Include="Config\AppConfig.cs" />
+    <Compile Include="Enum\DisplayType.cs" />
     <Compile Include="Enum\ImageShape.cs" />
     <Compile Include="Enum\ScreenType.cs" />
     <Compile Include="ImageResource\ImageResourceFileTypes.cs" />

@@ -9,6 +9,7 @@ using PicSliderSS.ImageResource;
 using PicSliderSS.Common;
 using System.Windows.Media.Animation;
 using PicSliderSS.Config;
+using PicSliderSS.Enum;
 using PicSliderSS.SliderImageInfomation;
 
 namespace PicSliderSS.PicSliderWindow
@@ -26,6 +27,8 @@ namespace PicSliderSS.PicSliderWindow
         private Storyboard[] storyboards;
 
         public bool Ready { get; set; } = false;
+
+        public DisplayType DisplayType => DisplayUtils.GetDisplayType(this.Height, this.Width);
 
         public PicSliderWindow()
         {
