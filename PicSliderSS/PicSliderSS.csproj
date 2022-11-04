@@ -73,6 +73,7 @@
     <Compile Include="Enum\DisplayType.cs" />
     <Compile Include="Enum\ImageShape.cs" />
     <Compile Include="Enum\ScreenType.cs" />
+    <Compile Include="Enum\StartUpMode.cs" />
     <Compile Include="ImageResource\ImageResourceFileTypes.cs" />
     <Compile Include="ImageResource\ImageResourceData.cs" />
     <Compile Include="ImageResource\ImageResourceQueue.cs" />
@@ -118,11 +119,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="config.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
